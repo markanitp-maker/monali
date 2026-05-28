@@ -25,11 +25,15 @@ interface UseProfilesResult extends State {
     companionId: string,
     patch: UpdateCompanionInput,
   ) => Promise<Companion>;
+  deleteCompanion: (companionId: string) => Promise<void>;
   createGroup: (name: string, color?: string) => Promise<Group>;
+  updateGroup: (groupId: string, name: string, color: string) => Promise<Group>;
+  deleteGroup: (groupId: string) => Promise<void>;
   addGroupMembers: (
     groupId: string,
     companionIds: string[],
   ) => Promise<GroupMember[]>;
+  removeGroupMember: (groupId: string, companionId: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -159,6 +163,21 @@ export const useProfiles = (): UseProfilesResult => {
     [],
   );
 
+  const deleteCompanion = useCallback(async (companionId: string): Promise<void> => {
+    const { error } = await supabase
+      .from("companions")
+      .delete()
+      .eq("profile_id", companionId);
+    if (error) throw error;
+    setState((s) => ({
+      ...s,
+      companions: s.companions.filter((c) => c.profile_id !== companionId),
+      simpleViewRecommended: shouldUseSimpleView(
+        s.companions.filter((c) => c.profile_id !== companionId),
+      ),
+    }));
+  }, []);
+
   const createGroup = useCallback(
     async (name: string, color?: string): Promise<Group> => {
       const {
@@ -178,6 +197,37 @@ export const useProfiles = (): UseProfilesResult => {
     },
     [],
   );
+
+  const updateGroup = useCallback(
+    async (groupId: string, name: string, color: string): Promise<Group> => {
+      const { data, error } = await supabase
+        .from("groups")
+        .update({ name, color })
+        .eq("group_id", groupId)
+        .select()
+        .single();
+      if (error) throw error;
+      const updated = data as Group;
+      setState((s) => ({
+        ...s,
+        groups: s.groups.map((g) => (g.group_id === groupId ? updated : g)),
+      }));
+      return updated;
+    },
+    [],
+  );
+
+  const deleteGroup = useCallback(async (groupId: string): Promise<void> => {
+    const { error } = await supabase
+      .from("groups")
+      .delete()
+      .eq("group_id", groupId);
+    if (error) throw error;
+    setState((s) => ({
+      ...s,
+      groups: s.groups.filter((g) => g.group_id !== groupId),
+    }));
+  }, []);
 
   const addGroupMembers = useCallback(
     async (
@@ -202,6 +252,18 @@ export const useProfiles = (): UseProfilesResult => {
     [],
   );
 
+  const removeGroupMember = useCallback(
+    async (groupId: string, companionId: string): Promise<void> => {
+      const { error } = await supabase
+        .from("group_members")
+        .delete()
+        .eq("group_id", groupId)
+        .eq("companion_id", companionId);
+      if (error) throw error;
+    },
+    [],
+  );
+
   useEffect(() => {
     void refresh();
   }, [refresh]);
@@ -210,8 +272,12 @@ export const useProfiles = (): UseProfilesResult => {
     ...state,
     saveCompanions,
     updateCompanion,
+    deleteCompanion,
     createGroup,
+    updateGroup,
+    deleteGroup,
     addGroupMembers,
+    removeGroupMember,
     refresh,
   };
 };
