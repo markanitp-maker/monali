@@ -44,8 +44,8 @@ export const ArchiveList = () => {
         const { data: rows, error: arcErr } = await supabase
           .from("outing_archives")
           .select("*")
-          .in("outing_plan_id", planIds)
-          .order("completed_at", { ascending: false });
+          .in("plan_id", planIds)
+          .order("created_at", { ascending: false });
         if (arcErr) {
           setError(arcErr.message);
           setLoading(false);
@@ -57,7 +57,7 @@ export const ArchiveList = () => {
       // 3) 조인 enrich
       const tripMap = new Map(tripList.map((t) => [t.plan_id, t] as const));
       const enriched: ArchiveListItem[] = archiveRows.map((a) => {
-        const trip = tripMap.get(a.outing_plan_id);
+        const trip = tripMap.get(a.plan_id);
         const photos = a.photo_urls ?? [];
         const fbs = a.accessibility_feedback ?? [];
         const uniquePlaces = new Set(fbs.map((f) => f.placeId));
@@ -71,7 +71,7 @@ export const ArchiveList = () => {
       });
 
       // 4) 아카이브 없는 완료/시작 plan 추출
-      const archivedSet = new Set(archiveRows.map((a) => a.outing_plan_id));
+      const archivedSet = new Set(archiveRows.map((a) => a.plan_id));
       const pending = tripList.filter(
         (t) =>
           (t.status === "COMPLETED" || t.status === "STARTED") &&
@@ -195,12 +195,12 @@ export const ArchiveList = () => {
                         </div>
                         <div className="mt-2 flex items-center gap-2">
                           <StarRating
-                            value={a.satisfaction_score}
+                            value={a.overall_score}
                             readOnly
                             size="sm"
                           />
                           <span className="text-xs text-gray-500">
-                            {a.satisfaction_score}/5
+                            {a.overall_score}/5
                           </span>
                         </div>
                       </div>

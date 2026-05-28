@@ -91,7 +91,7 @@ export const ArchiveForm = () => {
       const { data: existing } = await supabase
         .from("outing_archives")
         .select("*")
-        .eq("outing_plan_id", planId)
+        .eq("plan_id", planId)
         .maybeSingle();
 
       const initialMap: Record<
@@ -110,7 +110,7 @@ export const ArchiveForm = () => {
       setFeedbackMap(initialMap);
 
       if (existing) {
-        setOverallRating(existing.satisfaction_score ?? 5);
+        setOverallRating(existing.overall_score ?? 5);
         setMemo(existing.memo ?? "");
         setPhotoUrls((existing.photo_urls ?? []) as string[]);
       }

@@ -181,19 +181,18 @@ async function handleUpsertArchive(req: Request): Promise<Response> {
     return errJson("FORBIDDEN", "본인 계획만 기록할 수 있습니다.", 403);
   }
 
-  // upsert (onConflict: outing_plan_id)
+  // upsert (onConflict: plan_id)
   const { data: archive, error: upErr } = await adminClient
     .from("outing_archives")
     .upsert(
       {
-        outing_plan_id: body.planId,
-        satisfaction_score: body.overallRating,
+        plan_id: body.planId,
+        overall_score: body.overallRating,
         accessibility_feedback: body.accessibilityFeedback,
         memo: body.memo ?? null,
         photo_urls: body.photoUrls ?? [],
-        completed_at: new Date().toISOString(),
       },
-      { onConflict: "outing_plan_id" },
+      { onConflict: "plan_id" },
     )
     .select()
     .single();

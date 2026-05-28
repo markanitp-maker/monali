@@ -1,9 +1,7 @@
 /**
  * Monali — Archive (나들이 아카이브) 공유 타입
  *
- * archive-manager 에이전트 관리.
- *
- * DB: outing_archives (plan_id UNIQUE, satisfaction_score, memo, accessibility_feedback JSONB)
+ * DB: outing_archives (plan_id UNIQUE, overall_score, memo, accessibility_feedback JSONB, photo_urls JSONB)
  */
 
 export interface AccessibilityFeedback {
@@ -16,13 +14,15 @@ export interface AccessibilityFeedback {
 
 export interface OutingArchive {
   archive_id: string;
-  outing_plan_id: string;
+  plan_id: string;
   /** 1 ~ 5 별점 */
-  satisfaction_score: number;
+  overall_score: number;
   accessibility_feedback: AccessibilityFeedback[];
+  actual_visited_places?: unknown[];
   memo?: string;
   photo_urls?: string[];
-  completed_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 /** POST /api/archive 요청 바디 */

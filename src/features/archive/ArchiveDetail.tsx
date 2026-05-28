@@ -41,7 +41,7 @@ export const ArchiveDetail = () => {
       const { data: trip } = await supabase
         .from("trips")
         .select("title, scheduled_date")
-        .eq("plan_id", archive.outing_plan_id)
+        .eq("plan_id", archive.plan_id)
         .single();
 
       setData({
@@ -99,7 +99,7 @@ export const ArchiveDetail = () => {
             </span>
           )}
           <span>
-            기록일: {new Date(data.completed_at).toLocaleDateString()}
+            기록일: {new Date(data.created_at).toLocaleDateString()}
           </span>
         </div>
       </header>
@@ -109,12 +109,12 @@ export const ArchiveDetail = () => {
         <h2 className="mb-2 text-sm font-semibold">전체 만족도</h2>
         <div className="flex items-center gap-3">
           <StarRating
-            value={data.satisfaction_score}
+            value={data.overall_score}
             readOnly
             size="lg"
           />
           <span className="text-base font-semibold">
-            {data.satisfaction_score}/5
+            {data.overall_score}/5
           </span>
         </div>
       </section>
@@ -200,7 +200,7 @@ export const ArchiveDetail = () => {
       <div className="flex justify-end">
         <button
           type="button"
-          onClick={() => navigate(`/archive/${data.outing_plan_id}/feedback`)}
+          onClick={() => navigate(`/archive/${data.plan_id}/feedback`)}
           className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           기록 수정
