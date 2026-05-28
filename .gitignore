@@ -1,0 +1,43 @@
+# 환경변수 — 절대 커밋 금지
+.env.local
+.env.*.local
+supabase/functions/.env
+
+# 의존성
+node_modules/
+.pnp
+.pnp.js
+
+# 빌드
+dist/
+dist-ssr/
+build/
+
+# Vite
+*.local
+
+# 에디터
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# 테스트
+coverage/
+
+# 기타
+_workspace_prev/
+_workspace/*.png
+
+.vercel

@@ -1,0 +1,62 @@
+/**
+ * Monali — 일정표 인쇄 스타일
+ *
+ * itinerary-renderer 에이전트 관리.
+ * window.print() 호출 시 브라우저가 PDF로 변환하도록 최적화.
+ */
+
+@media print {
+  /* 인쇄 시 숨길 요소 */
+  .no-print {
+    display: none !important;
+  }
+
+  /* 페이지 여백 */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  /* 배경 제거 (잉크 절약 + 가독성) */
+  body,
+  html,
+  .itinerary-root {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  /* 컴포넌트 그림자/배경 제거 */
+  .itinerary-card,
+  .simple-card {
+    box-shadow: none !important;
+    border: 1px solid #cccccc !important;
+    background: #ffffff !important;
+  }
+
+  /* 장소 카드는 페이지 중간에서 잘리지 않도록 */
+  .itinerary-card,
+  .simple-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 8mm;
+  }
+
+  /* 단순화 뷰는 인쇄 시 큰 폰트로 */
+  .simple-view {
+    font-size: 14pt;
+  }
+  .simple-view h1 {
+    font-size: 22pt;
+  }
+  .simple-view h2 {
+    font-size: 18pt;
+  }
+  .simple-view .place-name {
+    font-size: 20pt;
+  }
+
+  /* 링크 url 노출 방지 */
+  a[href]::after {
+    content: "" !important;
+  }
+}
